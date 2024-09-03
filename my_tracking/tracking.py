@@ -16,7 +16,7 @@ class Tracking:
         for i in range(0, len(frame), batch_size):
             batch = frame[i:i+batch_size]
             detect_batch = self.model.predict(batch, conf=0.2)
-            detections.extend(detect_batch)  # Collect detections from the batch
+            detections.extend(detect_batch) 
         return detections
 
     def draw_rect(self, frame, bbox, track_id):
@@ -26,9 +26,9 @@ class Tracking:
         return frame
 
     def get_object(self, frame, read_from_stub=False, stub_path=None):
-        # Check if the input frame is a list of frames or a single frame
+        
         if isinstance(frame, list):
-            frame = np.array(frame)  # Convert the list to a NumPy array
+            frame = np.array(frame)  
 
         if read_from_stub and stub_path is not None and os.path.exists(stub_path):
             with open(stub_path, 'rb') as f:
@@ -48,14 +48,14 @@ class Tracking:
                     bbox = detection_track.xyxy[i].tolist()
                     track_id = int(detection_track.tracker_id[i])
 
-                    # Clip bounding box coordinates to be within frame dimensions
+                    
                     x1, y1, x2, y2 = map(int, bbox)
                     x1 = max(0, x1)
                     y1 = max(0, y1)
-                    x2 = min(frame.shape[2], x2)  # Updated to match dimensions for NumPy array
+                    x2 = min(frame.shape[2], x2)  
                     y2 = min(frame.shape[1], y2)
 
-                    # Extract the region of interest (ROI)
+                    
                     roi = frame[y1:y2, x1:x2]
 
                     track_data[track_id] = {'bbox': (x1, y1, x2, y2)}
