@@ -13,10 +13,10 @@ class Tracking:
     def detect_frame(self, frame):
         batch_size = 4
         detections = []
-        for i in range(0, len(frame), batch_size):
+        for i in range(0, frame.shape[0], batch_size):  # Use frame.shape[0] for number of frames
             batch = frame[i:i+batch_size]
             detect_batch = self.model.predict(batch, conf=0.2)
-            detections.extend(detect_batch) 
+            detections.extend(detect_batch)
         return detections
 
     def draw_rect(self, frame, bbox, track_id):
@@ -26,7 +26,6 @@ class Tracking:
         return frame
 
     def get_object(self, frame, read_from_stub=False, stub_path=None):
-        
         if isinstance(frame, list):
             frame = np.array(frame)  
 
@@ -48,14 +47,12 @@ class Tracking:
                     bbox = detection_track.xyxy[i].tolist()
                     track_id = int(detection_track.tracker_id[i])
 
-                    
                     x1, y1, x2, y2 = map(int, bbox)
                     x1 = max(0, x1)
                     y1 = max(0, y1)
-                    x2 = min(frame.shape[2], x2)  
+                    x2 = min(frame.shape[2], x2)
                     y2 = min(frame.shape[1], y2)
 
-                    
                     roi = frame[y1:y2, x1:x2]
 
                     track_data[track_id] = {'bbox': (x1, y1, x2, y2)}
@@ -68,7 +65,7 @@ class Tracking:
                 pickle.dump(tracks, f)
         return tracks
 
-    def annotion(self, video_frames, tracks):
+    def annotation(self, video_frames, tracks):
         output_video_frames = []
         for frame_num, frame in enumerate(video_frames):
             frame = frame.copy()
